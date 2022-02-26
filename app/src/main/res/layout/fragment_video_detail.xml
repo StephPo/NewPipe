@@ -441,22 +441,6 @@
                             app:drawableTopCompat="@drawable/ic_playlist_add" />
 
                         <org.schabi.newpipe.views.NewPipeTextView
-                            android:id="@+id/detail_controls_watch_later"
-                            android:layout_width="@dimen/detail_control_width"
-                            android:layout_height="@dimen/detail_control_height"
-                            android:layout_gravity="center_vertical"
-                            android:layout_weight="1"
-                            android:background="?attr/selectableItemBackgroundBorderless"
-                            android:clickable="true"
-                            android:contentDescription="@string/watch_later"
-                            android:focusable="true"
-                            android:gravity="center"
-                            android:paddingVertical="@dimen/detail_control_padding"
-                            android:text="@string/controls_watch_later_title"
-                            android:textSize="@dimen/detail_control_text_size"
-                            app:drawableTopCompat="@drawable/ic_watch_later" />
-
-                        <org.schabi.newpipe.views.NewPipeTextView
                             android:id="@+id/detail_controls_open_in_browser"
                             android:layout_width="@dimen/detail_control_width"
                             android:layout_height="@dimen/detail_control_height"
@@ -471,6 +455,38 @@
                             android:text="@string/open_in_browser"
                             android:textSize="@dimen/detail_control_text_size"
                             app:drawableTopCompat="@drawable/ic_language" />
+
+                        <org.schabi.newpipe.views.NewPipeTextView
+                            android:id="@+id/detail_controls_background"
+                            android:layout_width="@dimen/detail_control_width"
+                            android:layout_height="@dimen/detail_control_height"
+                            android:layout_gravity="center_vertical"
+                            android:layout_weight="1"
+                            android:background="?attr/selectableItemBackgroundBorderless"
+                            android:clickable="true"
+                            android:contentDescription="@string/play_audio"
+                            android:focusable="true"
+                            android:gravity="center"
+                            android:paddingVertical="@dimen/detail_control_padding"
+                            android:text="@string/controls_background_title"
+                            android:textSize="@dimen/detail_control_text_size"
+                            app:drawableTopCompat="@drawable/ic_headset" />
+
+                        <org.schabi.newpipe.views.NewPipeTextView
+                            android:id="@+id/detail_controls_popup"
+                            android:layout_width="@dimen/detail_control_width"
+                            android:layout_height="@dimen/detail_control_height"
+                            android:layout_gravity="center_vertical"
+                            android:layout_weight="1"
+                            android:background="?attr/selectableItemBackgroundBorderless"
+                            android:clickable="true"
+                            android:contentDescription="@string/open_in_popup_mode"
+                            android:focusable="true"
+                            android:gravity="center"
+                            android:paddingVertical="@dimen/detail_control_padding"
+                            android:text="@string/controls_popup_title"
+                            android:textSize="@dimen/detail_control_text_size"
+                            app:drawableTopCompat="@drawable/ic_picture_in_picture" />
 
                         <org.schabi.newpipe.views.NewPipeTextView
                             android:id="@+id/detail_controls_download"
@@ -518,22 +534,6 @@
                             app:drawableTopCompat="@drawable/ic_share" />
 
                         <org.schabi.newpipe.views.NewPipeTextView
-                            android:id="@+id/detail_controls_background"
-                            android:layout_width="@dimen/detail_control_width"
-                            android:layout_height="@dimen/detail_control_height"
-                            android:layout_gravity="center_vertical"
-                            android:layout_weight="1"
-                            android:background="?attr/selectableItemBackgroundBorderless"
-                            android:clickable="true"
-                            android:contentDescription="@string/play_audio"
-                            android:focusable="true"
-                            android:gravity="center"
-                            android:paddingVertical="@dimen/detail_control_padding"
-                            android:text="@string/controls_background_title"
-                            android:textSize="@dimen/detail_control_text_size"
-                            app:drawableTopCompat="@drawable/ic_headset" />
-
-                        <org.schabi.newpipe.views.NewPipeTextView
                             android:id="@+id/detail_controls_play_with_kodi"
                             android:layout_width="@dimen/detail_control_width"
                             android:layout_height="@dimen/detail_control_height"
@@ -548,22 +548,6 @@
                             android:text="@string/play_with_kodi_title"
                             android:textSize="@dimen/detail_control_text_size"
                             app:drawableTopCompat="@drawable/ic_cast" />
-
-                        <org.schabi.newpipe.views.NewPipeTextView
-                            android:id="@+id/detail_controls_popup"
-                            android:layout_width="@dimen/detail_control_width"
-                            android:layout_height="@dimen/detail_control_height"
-                            android:layout_gravity="center_vertical"
-                            android:layout_weight="1"
-                            android:background="?attr/selectableItemBackgroundBorderless"
-                            android:clickable="true"
-                            android:contentDescription="@string/open_in_popup_mode"
-                            android:focusable="true"
-                            android:gravity="center"
-                            android:paddingVertical="@dimen/detail_control_padding"
-                            android:text="@string/controls_popup_title"
-                            android:textSize="@dimen/detail_control_text_size"
-                            app:drawableTopCompat="@drawable/ic_picture_in_picture" />
 
                         <TextView
                             android:id="@+id/detail_controls_crash_the_player"
