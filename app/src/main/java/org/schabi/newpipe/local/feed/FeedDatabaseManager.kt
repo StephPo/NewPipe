@@ -58,6 +58,8 @@ class FeedDatabaseManager(context: Context) {
 
     fun outdatedSubscriptions(outdatedThreshold: OffsetDateTime) = feedTable.getAllOutdated(outdatedThreshold)
 
+    fun outdatedSubscriptionsWithoutGroup(outdatedThreshold: OffsetDateTime) = feedTable.getAllOutdatedWithoutGroup(outdatedThreshold)
+
     fun outdatedSubscriptionsWithNotificationMode(
         outdatedThreshold: OffsetDateTime,
         @NotificationMode notificationMode: Int
