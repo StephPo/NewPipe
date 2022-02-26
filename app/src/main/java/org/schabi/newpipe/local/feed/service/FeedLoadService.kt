@@ -177,7 +177,7 @@ class FeedLoadService : Service() {
         val outdatedThreshold = OffsetDateTime.now(ZoneOffset.UTC).minusSeconds(thresholdOutdatedSeconds.toLong())
 
         val subscriptions = when (groupId) {
-            FeedGroupEntity.GROUP_ALL_ID -> feedDatabaseManager.outdatedSubscriptions(outdatedThreshold)
+            FeedGroupEntity.GROUP_ALL_ID -> feedDatabaseManager.outdatedSubscriptionsWithoutGroup(outdatedThreshold)
             else -> feedDatabaseManager.outdatedSubscriptionsForGroup(groupId, outdatedThreshold)
         }
 

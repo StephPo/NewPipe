@@ -252,4 +252,19 @@ abstract class FeedDAO {
         """
     )
     abstract fun getAllOutdatedForGroup(groupId: Long, outdatedThreshold: OffsetDateTime): Flowable<List<SubscriptionEntity>>
+
+    @Query(
+        """
+        SELECT s.* FROM subscriptions s
+
+        LEFT JOIN feed_group_subscription_join fgs
+        ON s.uid = fgs.subscription_id
+
+        LEFT JOIN feed_last_updated lu
+        ON s.uid = lu.subscription_id
+
+        WHERE fgs.group_id IS NULL AND (lu.last_updated IS NULL OR lu.last_updated < :outdatedThreshold)
+        """
+    )
+    abstract fun getAllOutdatedWithoutGroup(outdatedThreshold: OffsetDateTime): Flowable<List<SubscriptionEntity>>
 }

@@ -57,6 +57,8 @@ class FeedDatabaseManager(context: Context) {
 
     fun outdatedSubscriptions(outdatedThreshold: OffsetDateTime) = feedTable.getAllOutdated(outdatedThreshold)
 
+    fun outdatedSubscriptionsWithoutGroup(outdatedThreshold: OffsetDateTime) = feedTable.getAllOutdatedWithoutGroup(outdatedThreshold)
+
     fun notLoadedCount(groupId: Long = FeedGroupEntity.GROUP_ALL_ID): Flowable<Long> {
         return when (groupId) {
             FeedGroupEntity.GROUP_ALL_ID -> feedTable.notLoadedCount()

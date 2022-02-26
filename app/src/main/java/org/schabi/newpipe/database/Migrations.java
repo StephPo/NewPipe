@@ -22,6 +22,7 @@ public final class Migrations {
     public static final int DB_VER_2 = 2;
     public static final int DB_VER_3 = 3;
     public static final int DB_VER_4 = 4;
+    public static final int DB_VER_900_SPO = 900;
 
     private static final String TAG = Migrations.class.getName();
     public static final boolean DEBUG = MainActivity.DEBUG;
@@ -176,6 +177,13 @@ public final class Migrations {
             database.execSQL(
                     "ALTER TABLE streams ADD COLUMN uploader_url TEXT"
             );
+        }
+    };
+
+    public static final Migration MIGRATION_4_900_SPO = new Migration(DB_VER_4, DB_VER_900_SPO) {
+        @Override
+        public void migrate(@NonNull final SupportSQLiteDatabase database) {
+
         }
     };
 
