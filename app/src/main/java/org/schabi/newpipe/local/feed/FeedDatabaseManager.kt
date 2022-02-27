@@ -46,7 +46,7 @@ class FeedDatabaseManager(context: Context) {
     ): Maybe<List<StreamWithState>> {
         return when (groupId) {
             FeedGroupEntity.GROUP_ALL_ID -> {
-                if (getPlayedStreams) feedTable.getAllStreams()
+                if (getPlayedStreams) feedTable.getAllStreamsWithoutGroup()
                 else feedTable.getLiveOrNotPlayedStreams()
             }
             else -> {
@@ -67,7 +67,7 @@ class FeedDatabaseManager(context: Context) {
 
     fun notLoadedCount(groupId: Long = FeedGroupEntity.GROUP_ALL_ID): Flowable<Long> {
         return when (groupId) {
-            FeedGroupEntity.GROUP_ALL_ID -> feedTable.notLoadedCount()
+            FeedGroupEntity.GROUP_ALL_ID -> feedTable.notLoadedCountWithoutGroup()
             else -> feedTable.notLoadedCountForGroup(groupId)
         }
     }
@@ -183,7 +183,7 @@ class FeedDatabaseManager(context: Context) {
 
     fun oldestSubscriptionUpdate(groupId: Long): Flowable<List<OffsetDateTime>> {
         return when (groupId) {
-            FeedGroupEntity.GROUP_ALL_ID -> feedTable.oldestSubscriptionUpdateFromAll()
+            FeedGroupEntity.GROUP_ALL_ID -> feedTable.oldestSubscriptionUpdateFromAllWithoutGroup()
             else -> feedTable.oldestSubscriptionUpdate(groupId)
         }
     }
