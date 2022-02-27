@@ -54,6 +54,31 @@ abstract class FeedDAO {
 
         INNER JOIN feed f
         ON s.uid = f.stream_id
+        
+        LEFT JOIN feed_group_subscription_join fgs
+        ON f.subscription_id = fgs.subscription_id
+        
+        WHERE fgs.group_id IS NULL
+
+        ORDER BY s.upload_date IS NULL DESC, s.upload_date DESC, s.uploader ASC
+        LIMIT 500
+        """
+    )
+    abstract fun getAllStreamsWithoutGroup(): Maybe<List<StreamWithState>>
+
+    @Query(
+        """
+        SELECT s.*, sst.progress_time
+        FROM streams s
+
+        LEFT JOIN stream_state sst
+        ON s.uid = sst.stream_id
+
+        LEFT JOIN stream_history sh
+        ON s.uid = sh.stream_id
+
+        INNER JOIN feed f
+        ON s.uid = f.stream_id
 
         INNER JOIN feed_group_subscription_join fgs
         ON fgs.subscription_id = f.subscription_id
@@ -209,8 +234,35 @@ abstract class FeedDAO {
     @Query("SELECT MIN(last_updated) FROM feed_last_updated")
     abstract fun oldestSubscriptionUpdateFromAll(): Flowable<List<OffsetDateTime>>
 
+    @Query(
+        """
+        SELECT MIN(lu.last_updated) FROM subscriptions s
+
+        LEFT JOIN feed_group_subscription_join fgs
+        ON s.uid = fgs.subscription_id
+
+        LEFT JOIN feed_last_updated lu
+        ON s.uid = lu.subscription_id
+
+        WHERE fgs.group_id IS NULL
+        """
+    )
+    abstract fun oldestSubscriptionUpdateFromAllWithoutGroup(): Flowable<List<OffsetDateTime>>
+
     @Query("SELECT COUNT(*) FROM feed_last_updated WHERE last_updated IS NULL")
     abstract fun notLoadedCount(): Flowable<Long>
+
+    @Query(
+        """
+            SELECT COUNT(*) FROM feed_last_updated lu
+            
+            LEFT JOIN feed_group_subscription_join fgs
+            ON lu.subscription_id = fgs.subscription_id
+
+            WHERE last_updated IS NULL AND fgs.group_id IS NULL
+        """
+    )
+    abstract fun notLoadedCountWithoutGroup(): Flowable<Long>
 
     @Query(
         """
