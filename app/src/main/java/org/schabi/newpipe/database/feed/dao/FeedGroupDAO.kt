@@ -17,6 +17,9 @@ abstract class FeedGroupDAO {
     @Query("SELECT * FROM feed_group ORDER BY sort_order ASC")
     abstract fun getAll(): Flowable<List<FeedGroupEntity>>
 
+    @Query("SELECT * FROM feed_group ORDER BY sort_order ASC")
+    abstract fun getAllSynchronous(): List<FeedGroupEntity>
+
     @Query("SELECT * FROM feed_group WHERE uid = :groupId")
     abstract fun getGroup(groupId: Long): Maybe<FeedGroupEntity>
 

@@ -110,6 +110,7 @@ class SubscriptionManager(context: Context) {
     fun insertSubscription(subscriptionEntity: SubscriptionEntity, info: ChannelInfo) {
         database.runInTransaction {
             val subscriptionId = subscriptionTable.insert(subscriptionEntity)
+            subscriptionEntity.uid = subscriptionId
             feedDatabaseManager.upsertAll(subscriptionId, info.relatedItems)
         }
     }

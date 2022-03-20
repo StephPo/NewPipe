@@ -4,8 +4,10 @@ import static org.schabi.newpipe.ktx.TextViewUtils.animateTextColor;
 import static org.schabi.newpipe.ktx.ViewUtils.animate;
 import static org.schabi.newpipe.ktx.ViewUtils.animateBackgroundColor;
 
+import android.app.Dialog;
 import android.content.Context;
 import android.graphics.Color;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
@@ -26,6 +28,7 @@ import androidx.core.content.ContextCompat;
 import com.google.android.material.snackbar.Snackbar;
 import com.jakewharton.rxbinding4.view.RxView;
 
+import org.schabi.newpipe.MainActivity;
 import org.schabi.newpipe.R;
 import org.schabi.newpipe.database.subscription.NotificationMode;
 import org.schabi.newpipe.database.subscription.SubscriptionEntity;
@@ -41,7 +44,10 @@ import org.schabi.newpipe.extractor.exceptions.ContentNotSupportedException;
 import org.schabi.newpipe.extractor.stream.StreamInfoItem;
 import org.schabi.newpipe.fragments.list.BaseListInfoFragment;
 import org.schabi.newpipe.ktx.AnimationType;
+import org.schabi.newpipe.local.feed.FeedDatabaseManager;
 import org.schabi.newpipe.local.subscription.SubscriptionManager;
+import org.schabi.newpipe.local.subscription.dialog.SelectChannelGroupDialog;
+import org.schabi.newpipe.local.subscription.dialog.SelectChannelGroupDialog.ChooseChannelGroupListItem;
 import org.schabi.newpipe.local.feed.notifications.NotificationHelper;
 import org.schabi.newpipe.player.MainPlayer.PlayerType;
 import org.schabi.newpipe.player.playqueue.ChannelPlayQueue;
@@ -53,6 +59,7 @@ import org.schabi.newpipe.util.PicassoHelper;
 import org.schabi.newpipe.util.ThemeHelper;
 import org.schabi.newpipe.util.external_communication.ShareUtils;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Supplier;
@@ -76,6 +83,7 @@ public class ChannelFragment extends BaseListInfoFragment<StreamInfoItem, Channe
 
     private final CompositeDisposable disposables = new CompositeDisposable();
     private Disposable subscribeButtonMonitor;
+    private Disposable subscribeOpenChannelGroupsMonitor;
 
     /*//////////////////////////////////////////////////////////////////////////
     // Views
@@ -138,6 +146,9 @@ public class ChannelFragment extends BaseListInfoFragment<StreamInfoItem, Channe
         disposables.clear();
         if (subscribeButtonMonitor != null) {
             subscribeButtonMonitor.dispose();
+        }
+        if (subscribeOpenChannelGroupsMonitor != null) {
+            subscribeOpenChannelGroupsMonitor.dispose();
         }
         channelBinding = null;
         headerBinding = null;
@@ -261,6 +272,66 @@ public class ChannelFragment extends BaseListInfoFragment<StreamInfoItem, Channe
                 }, onError));
     }
 
+    private Function<Object, Object> mapOnSubscribeOpenChannelGroups(
+            final SubscriptionEntity subscription,
+            final ChannelInfo info) {
+        return (@NonNull Object o) -> {
+            if (DEBUG) {
+                Log.d(TAG, "mapOnOpenChannelGroups() called with: info = [" + info + "], "
+                        + "subscription = [" + subscription + "]");
+            }
+
+            final ChooseChannelGroupListItem[] availableChannels = getAvailableChannels(requireContext());
+
+            if (availableChannels.length == 0) {
+                return o;
+            }
+
+            final Context context = requireContext();
+
+            final Dialog.OnClickListener actionListener = (dialog, which) -> {
+                AsyncTask.execute(() -> {
+                    // Subscribe ...
+                    final ChooseChannelGroupListItem selected = availableChannels[which];
+                    subscriptionManager.insertSubscription(subscription, info);
+
+                    // ... then add to group
+                    final FeedDatabaseManager feedDatabaseManager = new FeedDatabaseManager(context);
+                    feedDatabaseManager.subscriptionIdsForGroup(selected.getGroupId())
+                        .take(1)
+                        .subscribeOn(Schedulers.io())
+                        .subscribe(subscriptionsIds -> {
+                            subscriptionsIds.add(subscription.getUid());
+                            feedDatabaseManager.updateSubscriptionsForGroup(selected.getGroupId(), subscriptionsIds)
+                                .subscribeOn(Schedulers.io())
+                                .observeOn(Schedulers.io())
+                                .doOnError(throwable ->
+                                        ErrorUtil.createNotification(context,
+                                                new ErrorInfo(throwable,
+                                                        UserAction.SUBSCRIPTION_UPDATE,
+                                                        "Adding subscription " + subscription.getName() + " to group " + info.getName())))
+                                .subscribe();
+                        });
+                });
+            };
+
+            ((MainActivity) context).runOnUiThread(() -> new SelectChannelGroupDialog(context, availableChannels, actionListener).show());
+
+            return o;
+        };
+    }
+
+    private ChooseChannelGroupListItem[] getAvailableChannels(final Context context) {
+        final List<ChooseChannelGroupListItem> items = new ArrayList<>();
+        final FeedDatabaseManager feedDatabaseManager = new FeedDatabaseManager(context);
+        feedDatabaseManager.groupsSynchronous()
+                .stream()
+                .forEach(feedGroupEntities -> {
+                        items.add(new ChooseChannelGroupListItem(feedGroupEntities));
+                });
+        return items.toArray(new ChooseChannelGroupListItem[0]);
+    }
+
     private Function<Object, Object> mapOnSubscribe(final SubscriptionEntity subscription,
                                                     final ChannelInfo info) {
         return (@NonNull Object o) -> {
@@ -317,6 +388,23 @@ public class ChannelFragment extends BaseListInfoFragment<StreamInfoItem, Channe
                 .subscribe(onNext, onError);
     }
 
+    private Disposable monitorSubscribeOpenChannelGroupsButton(
+            final Button subscribeButton,
+            final Function<Object, Object> action) {
+        final Consumer<Object> onNext = (@NonNull Object o) -> {
+            if (DEBUG) {
+                Log.d(TAG, "Long click on subscribe button");
+            }
+        };
+
+        /* Emit long clicks from main thread unto io thread */
+        return RxView.longClicks(subscribeButton)
+                .subscribeOn(AndroidSchedulers.mainThread())
+                .observeOn(Schedulers.io())
+                .map(action)
+                .subscribe(onNext);
+    }
+
     private Consumer<List<SubscriptionEntity>> getSubscribeUpdateMonitor(final ChannelInfo info) {
         return (List<SubscriptionEntity> subscriptionEntities) -> {
             if (DEBUG) {
@@ -325,6 +413,9 @@ public class ChannelFragment extends BaseListInfoFragment<StreamInfoItem, Channe
             }
             if (subscribeButtonMonitor != null) {
                 subscribeButtonMonitor.dispose();
+            }
+            if (subscribeOpenChannelGroupsMonitor != null) {
+                subscribeOpenChannelGroupsMonitor.dispose();
             }
 
             if (subscriptionEntities.isEmpty()) {
@@ -341,6 +432,9 @@ public class ChannelFragment extends BaseListInfoFragment<StreamInfoItem, Channe
                 updateNotifyButton(null);
                 subscribeButtonMonitor = monitorSubscribeButton(
                         headerBinding.channelSubscribeButton, mapOnSubscribe(channel, info));
+                subscribeOpenChannelGroupsMonitor = monitorSubscribeOpenChannelGroupsButton(
+                        headerBinding.channelSubscribeButton,
+                        mapOnSubscribeOpenChannelGroups(channel, info));
             } else {
                 if (DEBUG) {
                     Log.d(TAG, "Found subscription to this channel!");
@@ -533,6 +627,9 @@ public class ChannelFragment extends BaseListInfoFragment<StreamInfoItem, Channe
         disposables.clear();
         if (subscribeButtonMonitor != null) {
             subscribeButtonMonitor.dispose();
+        }
+        if (subscribeOpenChannelGroupsMonitor != null) {
+            subscribeOpenChannelGroupsMonitor.dispose();
         }
         updateSubscription(result);
         monitorSubscription(result);

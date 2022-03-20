@@ -38,6 +38,8 @@ class FeedDatabaseManager(context: Context) {
 
     fun groups() = feedGroupTable.getAll()
 
+    fun groupsSynchronous() = feedGroupTable.getAllSynchronous()
+
     fun database() = database
 
     fun getStreams(
