@@ -75,7 +75,7 @@ class FeedLoadManager(private val context: Context) {
          * subscriptions which have not been updated within the feed updated threshold
          */
         val outdatedSubscriptions = when (groupId) {
-            FeedGroupEntity.GROUP_ALL_ID -> feedDatabaseManager.outdatedSubscriptions(outdatedThreshold)
+            FeedGroupEntity.GROUP_ALL_ID -> feedDatabaseManager.outdatedSubscriptionsWithoutGroup(outdatedThreshold)
             GROUP_NOTIFICATION_ENABLED -> feedDatabaseManager.outdatedSubscriptionsWithNotificationMode(
                 outdatedThreshold, NotificationMode.ENABLED
             )
