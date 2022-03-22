@@ -35,5 +35,6 @@ data class FeedGroupEntity(
         const val SORT_ORDER = "sort_order"
 
         const val GROUP_ALL_ID = -1L
+        const val GROUP_LATER_SPO_ID = 2
     }
 }
