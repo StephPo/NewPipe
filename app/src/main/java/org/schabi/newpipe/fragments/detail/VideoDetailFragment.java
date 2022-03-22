@@ -31,6 +31,7 @@ import android.view.WindowManager;
 import android.view.animation.DecelerateInterpolator;
 import android.widget.FrameLayout;
 import android.widget.RelativeLayout;
+import android.widget.Toast;
 
 import androidx.annotation.AttrRes;
 import androidx.annotation.NonNull;
@@ -51,7 +52,9 @@ import com.google.android.material.tabs.TabLayout;
 import com.squareup.picasso.Callback;
 
 import org.schabi.newpipe.App;
+import org.schabi.newpipe.NewPipeDatabase;
 import org.schabi.newpipe.R;
+import org.schabi.newpipe.database.feed.model.FeedGroupEntity;
 import org.schabi.newpipe.database.stream.model.StreamEntity;
 import org.schabi.newpipe.databinding.FragmentVideoDetailBinding;
 import org.schabi.newpipe.download.DownloadDialog;
@@ -76,6 +79,7 @@ import org.schabi.newpipe.fragments.list.videos.RelatedItemsFragment;
 import org.schabi.newpipe.ktx.AnimationType;
 import org.schabi.newpipe.local.dialog.PlaylistDialog;
 import org.schabi.newpipe.local.history.HistoryRecordManager;
+import org.schabi.newpipe.local.playlist.LocalPlaylistManager;
 import org.schabi.newpipe.player.MainPlayer;
 import org.schabi.newpipe.player.MainPlayer.PlayerType;
 import org.schabi.newpipe.player.Player;
@@ -454,6 +458,18 @@ public final class VideoDetailFragment
                     );
                 }
                 break;
+            case R.id.detail_controls_watch_later:
+                final Context context = getContext();
+                if (currentInfo != null && context != null) {
+                    final Toast successToast = Toast.makeText(context, R.string.watch_later__success_toast, Toast.LENGTH_SHORT);
+                    final LocalPlaylistManager playlistManager = new LocalPlaylistManager(NewPipeDatabase.getInstance(context));
+                    disposables.add(
+                        playlistManager.appendToPlaylist(FeedGroupEntity.GROUP_LATER_SPO_ID, Collections.singletonList(new StreamEntity(currentInfo)))
+                                .observeOn(AndroidSchedulers.mainThread())
+                                .subscribe(ignored -> successToast.show())
+                    );
+                }
+                break;
             case R.id.detail_controls_download:
                 if (PermissionHelper.checkStoragePermissions(activity,
                         PermissionHelper.DOWNLOAD_DIALOG_REQUEST_CODE)) {
@@ -654,6 +670,7 @@ public final class VideoDetailFragment
         binding.detailControlsPopup.setOnClickListener(this);
         binding.detailControlsPopup.setOnLongClickListener(this);
         binding.detailControlsPlaylistAppend.setOnClickListener(this);
+        binding.detailControlsWatchLater.setOnClickListener(this);
         binding.detailControlsDownload.setOnClickListener(this);
         binding.detailControlsDownload.setOnLongClickListener(this);
         binding.detailControlsShare.setOnClickListener(this);

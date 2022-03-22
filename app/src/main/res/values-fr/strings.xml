@@ -685,7 +685,9 @@
     <string name="no_appropriate_file_manager_message">Aucun gestionnaire de fichier approprié n\'a été trouvé pour cette action.
 \nVeuillez installer un gestionnaire de fichiers ou essayez de désactiver \'%s\' dans les paramètres de téléchargement.</string>
     <string name="detail_pinned_comment_view_description">Commentaire épinglé</string>
-    <string name="background_player_already_playing_toast">Une lecture est déjà en arrière-plan</string>
     <string name="leak_canary_not_available">LeakCanary n\'est pas disponible</string>
     <string name="feed_group_select_title">Choisir un groupe de chaînes</string>
+    <string name="watch_later">Regarder plus tard</string>
+    <string name="controls_watch_later_title">Plus tard</string>
+    <string name="watch_later__success_toast">A regarder plus tard</string>
 </resources>
