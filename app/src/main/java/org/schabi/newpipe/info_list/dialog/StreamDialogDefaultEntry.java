@@ -4,16 +4,21 @@ import static org.schabi.newpipe.util.NavigationHelper.openChannelFragment;
 import static org.schabi.newpipe.util.SparseItemUtil.fetchItemInfoIfSparse;
 import static org.schabi.newpipe.util.SparseItemUtil.fetchUploaderUrlIfSparse;
 
+import android.content.Context;
 import android.net.Uri;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.StringRes;
 
+import org.schabi.newpipe.NewPipeDatabase;
 import org.schabi.newpipe.R;
+import org.schabi.newpipe.database.feed.model.FeedGroupEntity;
 import org.schabi.newpipe.database.stream.model.StreamEntity;
 import org.schabi.newpipe.local.dialog.PlaylistAppendDialog;
 import org.schabi.newpipe.local.dialog.PlaylistDialog;
 import org.schabi.newpipe.local.history.HistoryRecordManager;
+import org.schabi.newpipe.local.playlist.LocalPlaylistManager;
 import org.schabi.newpipe.util.NavigationHelper;
 import org.schabi.newpipe.util.external_communication.KoreUtils;
 import org.schabi.newpipe.util.external_communication.ShareUtils;
@@ -96,6 +101,17 @@ public enum StreamDialogDefaultEntry {
                 )
         )
     ),
+
+    WATCH_LATER(R.string.watch_later, ((fragment, item) -> {
+        final Context context = fragment.getContext();
+        if (context != null) {
+            final Toast successToast = Toast.makeText(context, R.string.watch_later__success_toast, Toast.LENGTH_SHORT);
+            final LocalPlaylistManager playlistManager = new LocalPlaylistManager(NewPipeDatabase.getInstance(context));
+            playlistManager.appendToPlaylist(FeedGroupEntity.GROUP_LATER_SPO_ID, Collections.singletonList(new StreamEntity(item)))
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe(ignored -> successToast.show());
+        }
+    })),
 
     PLAY_WITH_KODI(R.string.play_with_kodi_title, (fragment, item) -> {
         final Uri videoUrl = Uri.parse(item.getUrl());
