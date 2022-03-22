@@ -750,4 +750,7 @@
     <string name="you_successfully_subscribed">You now subscribed to this channel</string>
     <string name="enumeration_comma">,</string>
     <string name="toggle_all">Toggle all</string>
+    <string name="watch_later">Watch later</string>
+    <string name="controls_watch_later_title">Later</string>
+    <string name="watch_later__success_toast">To watch later</string>
 </resources>
