@@ -687,6 +687,9 @@
     <string name="detail_pinned_comment_view_description">Commentaire épinglé</string>
     <string name="leak_canary_not_available">LeakCanary n\'est pas disponible</string>
     <string name="feed_group_select_title">Choisir un groupe de chaînes</string>
+    <string name="watch_later">Regarder plus tard</string>
+    <string name="controls_watch_later_title">Plus tard</string>
+    <string name="watch_later__success_toast">A regarder plus tard</string>
     <string name="progressive_load_interval_summary">Modifie la taille de l\'intervalle de chargement (actuellement %s). Une valeur plus faible peut accélérer le chargement initial des vidéos .</string>
     <string name="progressive_load_interval_exoplayer_default">Valeur par défaut d’ExoPlayer</string>
     <string name="streams_notification_channel_name">Nouveaux flux</string>

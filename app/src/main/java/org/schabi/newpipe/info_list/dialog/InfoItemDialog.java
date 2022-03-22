@@ -117,6 +117,7 @@ public final class InfoItemDialog {
          *     | addEntry() and addAllEntries()             |
          *     + - - - - - - - - - - - - - - - - - - - - - -+
          *     | APPEND_PLAYLIST                            |
+         *     | WATCH_LATER                                |
          *     | SHARE                                      |
          *     | OPEN_IN_BROWSER                            |
          *     | PLAY_WITH_KODI                             |
@@ -158,6 +159,7 @@ public final class InfoItemDialog {
          *     | addEntry() and addAllEntries()             |
          *     + - - - - - - - - - - - - - - - - - - - - - -+
          *     | APPEND_PLAYLIST                            |
+         *     | WATCH_LATER                                |
          *     | SHARE                                      |
          *     | OPEN_IN_BROWSER                            |
          *     | PLAY_WITH_KODI                             |
@@ -324,6 +326,7 @@ public final class InfoItemDialog {
         public Builder addDefaultEndEntries() {
             addAllEntries(
                     StreamDialogDefaultEntry.APPEND_PLAYLIST,
+                    StreamDialogDefaultEntry.WATCH_LATER,
                     StreamDialogDefaultEntry.SHARE,
                     StreamDialogDefaultEntry.OPEN_IN_BROWSER
             );
