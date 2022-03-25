@@ -646,6 +646,7 @@ public final class VideoDetailFragment
             final int transparent = ContextCompat.getColor(requireContext(),
                     R.color.transparent_background_color);
             binding.detailControlsPlaylistAppend.setBackgroundColor(transparent);
+            binding.detailControlsWatchLater.setBackgroundColor(transparent);
             binding.detailControlsBackground.setBackgroundColor(transparent);
             binding.detailControlsPopup.setBackgroundColor(transparent);
             binding.detailControlsDownload.setBackgroundColor(transparent);
