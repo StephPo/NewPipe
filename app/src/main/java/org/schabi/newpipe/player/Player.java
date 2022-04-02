@@ -1119,7 +1119,7 @@ public final class Player implements
             binding.topControls.setOrientation(LinearLayout.VERTICAL);
             binding.primaryControls.getLayoutParams().width
                     = LinearLayout.LayoutParams.MATCH_PARENT;
-            binding.secondaryControls.setVisibility(View.INVISIBLE);
+            binding.secondaryControls.setVisibility(View.VISIBLE);
             binding.moreOptionsButton.setImageDrawable(AppCompatResources.getDrawable(context,
                     R.drawable.ic_expand_more));
             binding.share.setVisibility(View.VISIBLE);
