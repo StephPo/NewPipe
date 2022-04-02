@@ -229,6 +229,7 @@
                         android:clickable="true"
                         android:focusable="true"
                         android:padding="@dimen/player_main_buttons_padding"
+                        android:rotationX="180"
                         android:scaleType="fitXY"
                         app:srcCompat="@drawable/ic_expand_more"
                         app:tint="@color/white"
@@ -241,7 +242,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:gravity="top"
-                    android:visibility="invisible"
+                    android:visibility="visible"
                     tools:ignore="RtlHardcoded"
                     tools:visibility="visible">
 
