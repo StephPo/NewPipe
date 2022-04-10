@@ -3863,6 +3863,16 @@ public final class Player implements
                     return true;
                 }
 
+                // SPO fast forward or backward when tapping on right or left
+                if (keyCode == KeyEvent.KEYCODE_DPAD_RIGHT) {
+                    fastForward();
+                    return true;
+                }
+                if (keyCode == KeyEvent.KEYCODE_DPAD_LEFT) {
+                    fastRewind();
+                    return true;
+                }
+
                 if (isControlsVisible()) {
                     hideControls(DEFAULT_CONTROLS_DURATION, DPAD_CONTROLS_HIDE_TIME);
                 } else {
