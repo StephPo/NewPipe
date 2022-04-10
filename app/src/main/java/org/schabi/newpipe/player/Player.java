@@ -108,6 +108,7 @@ import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.SeekBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -3816,9 +3817,73 @@ public final class Player implements
         return true;
     }
 
-    public boolean onKeyDown(final int keyCode) {
+    private boolean onKeyDownForNewTempoSpo(final int keyCode) {
+        boolean isKeyForNewTempo = false;
+        float newTempo = 1.0f;
         switch (keyCode) {
             default:
+                break;
+            case KeyEvent.KEYCODE_Q:
+                isKeyForNewTempo = true;
+                newTempo = 1.00f;
+                break;
+            case KeyEvent.KEYCODE_A:
+                isKeyForNewTempo = true;
+                newTempo = 1.05f;
+                break;
+            case KeyEvent.KEYCODE_Z:
+                isKeyForNewTempo = true;
+                newTempo = 1.1f;
+                break;
+            case KeyEvent.KEYCODE_E:
+                isKeyForNewTempo = true;
+                newTempo = 1.15f;
+                break;
+            case KeyEvent.KEYCODE_R:
+                isKeyForNewTempo = true;
+                newTempo = 1.2f;
+                break;
+            case KeyEvent.KEYCODE_T:
+                isKeyForNewTempo = true;
+                newTempo = 1.25f;
+                break;
+            case KeyEvent.KEYCODE_Y:
+                isKeyForNewTempo = true;
+                newTempo = 1.3f;
+                break;
+            case KeyEvent.KEYCODE_U:
+                isKeyForNewTempo = true;
+                newTempo = 1.35f;
+                break;
+            case KeyEvent.KEYCODE_I:
+                isKeyForNewTempo = true;
+                newTempo = 1.4f;
+                break;
+            case KeyEvent.KEYCODE_O:
+                isKeyForNewTempo = true;
+                newTempo = 1.45f;
+                break;
+            case KeyEvent.KEYCODE_P:
+                isKeyForNewTempo = true;
+                newTempo = 1.5f;
+                break;
+        }
+        if (isKeyForNewTempo) {
+            setPlaybackParameters(
+                    newTempo,
+                    retrievePlaybackParametersFromPrefs(this).pitch,
+                    getPrefs().getBoolean(getContext().getString(R.string.playback_skip_silence_key), getPlaybackSkipSilence()));
+            Toast.makeText(context, "New tempo set to " + newTempo, Toast.LENGTH_SHORT).show();
+        }
+        return isKeyForNewTempo;
+    }
+
+    public boolean onKeyDown(final int keyCode) {
+       switch (keyCode) {
+            default:
+                if (onKeyDownForNewTempoSpo(keyCode)) { // Call done in "default" to prevent conflicts with a new dev from NewPipe using the same keycodes.
+                    return true;
+                }
                 break;
             case KeyEvent.KEYCODE_SPACE:
                 if (isFullscreen) {
