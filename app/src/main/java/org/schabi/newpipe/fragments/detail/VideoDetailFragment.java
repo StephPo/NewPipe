@@ -93,6 +93,7 @@ import org.schabi.newpipe.player.playqueue.SinglePlayQueue;
 import org.schabi.newpipe.util.Constants;
 import org.schabi.newpipe.util.DeviceUtils;
 import org.schabi.newpipe.util.ExtractorHelper;
+import org.schabi.newpipe.util.ReturnYouTubeDislikeUtils;
 import org.schabi.newpipe.util.ListHelper;
 import org.schabi.newpipe.util.Localization;
 import org.schabi.newpipe.util.NavigationHelper;
@@ -1656,6 +1657,19 @@ public final class VideoDetailFragment
 
             binding.detailThumbsDisabledView.setVisibility(View.VISIBLE);
         } else {
+            if (info.getDislikeCount() == -1) {
+                new Thread(() -> {
+                    info.setDislikeCount(ReturnYouTubeDislikeUtils.getDislikes(getContext(), info));
+                    if (info.getDislikeCount() >= 0) {
+                        activity.runOnUiThread(() -> {
+                            binding.detailThumbsDownCountView.setText(Localization
+                                    .shortCount(activity, info.getDislikeCount()));
+                            binding.detailThumbsDownCountView.setVisibility(View.VISIBLE);
+                            binding.detailThumbsDownImgView.setVisibility(View.VISIBLE);
+                        });
+                    }
+                }).start();
+            }
             if (info.getDislikeCount() >= 0) {
                 binding.detailThumbsDownCountView.setText(Localization
                         .shortCount(activity, info.getDislikeCount()));

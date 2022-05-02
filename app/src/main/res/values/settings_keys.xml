@@ -1352,4 +1352,8 @@
     </string-array>
     <string name="streams_notifications_channels_key">streams_notifications_channels</string>
     <string name="player_notification_screen_key">player_notification_screen</string>
+
+    <!-- Extras -->
+    <string name="enable_return_youtube_dislike_key" translatable="false">enable_return_youtube_dislike</string>
+
 </resources>
