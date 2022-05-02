@@ -3830,6 +3830,17 @@ public final class Player implements
         return true;
     }
 
+    private boolean onKeyDownSpo(final int keyCode) {
+        switch (keyCode) {
+            default:
+                break;
+            case KeyEvent.KEYCODE_W:
+                seekTo(0);
+                return true;
+        }
+        return false;
+    }
+
     private boolean onKeyDownForNewTempoSpo(final int keyCode) {
         boolean isKeyForNewTempo = false;
         float newTempo = 1.0f;
@@ -3895,6 +3906,9 @@ public final class Player implements
        switch (keyCode) {
             default:
                 if (onKeyDownForNewTempoSpo(keyCode)) { // Call done in "default" to prevent conflicts with a new dev from NewPipe using the same keycodes.
+                    return true;
+                }
+                if (onKeyDownSpo(keyCode)) { // Call done in "default" to prevent conflicts with a new dev from NewPipe using the same keycodes.
                     return true;
                 }
                 break;
