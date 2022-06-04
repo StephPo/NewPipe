@@ -35,11 +35,13 @@ abstract class FeedDAO {
         INNER JOIN feed f
         ON s.uid = f.stream_id
 
+        WHERE s.duration > 0 AND s.upload_date <= :nowDate
+
         ORDER BY s.upload_date IS NULL DESC, s.upload_date DESC, s.uploader ASC
         LIMIT 500
         """
     )
-    abstract fun getAllStreams(): Maybe<List<StreamWithState>>
+    abstract fun getAllStreams(nowDate: OffsetDateTime): Maybe<List<StreamWithState>>
 
     @Query(
         """
@@ -58,13 +60,13 @@ abstract class FeedDAO {
         LEFT JOIN feed_group_subscription_join fgs
         ON f.subscription_id = fgs.subscription_id
         
-        WHERE fgs.group_id IS NULL
+        WHERE fgs.group_id IS NULL AND s.duration > 0 AND s.upload_date <= :nowDate
 
         ORDER BY s.upload_date IS NULL DESC, s.upload_date DESC, s.uploader ASC
         LIMIT 500
         """
     )
-    abstract fun getAllStreamsWithoutGroup(): Maybe<List<StreamWithState>>
+    abstract fun getAllStreamsWithoutGroup(nowDate: OffsetDateTime): Maybe<List<StreamWithState>>
 
     @Query(
         """
@@ -84,12 +86,13 @@ abstract class FeedDAO {
         ON fgs.subscription_id = f.subscription_id
 
         WHERE fgs.group_id = :groupId
+        AND s.duration > 0 AND s.upload_date <= :nowDate
 
         ORDER BY s.upload_date IS NULL DESC, s.upload_date DESC, s.uploader ASC
         LIMIT 500
         """
     )
-    abstract fun getAllStreamsForGroup(groupId: Long): Maybe<List<StreamWithState>>
+    abstract fun getAllStreamsForGroup(groupId: Long, nowDate: OffsetDateTime): Maybe<List<StreamWithState>>
 
     /**
      * @see StreamStateEntity.isFinished()
