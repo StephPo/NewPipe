@@ -48,11 +48,11 @@ class FeedDatabaseManager(context: Context) {
     ): Maybe<List<StreamWithState>> {
         return when (groupId) {
             FeedGroupEntity.GROUP_ALL_ID -> {
-                if (getPlayedStreams) feedTable.getAllStreamsWithoutGroup(OffsetDateTime.now(ZoneOffset.UTC))
+                if (getPlayedStreams) feedTable.getAllStreamsWithoutGroup()
                 else feedTable.getLiveOrNotPlayedStreams()
             }
             else -> {
-                if (getPlayedStreams) feedTable.getAllStreamsForGroup(groupId, OffsetDateTime.now(ZoneOffset.UTC))
+                if (getPlayedStreams) feedTable.getAllStreamsForGroup(groupId)
                 else feedTable.getLiveOrNotPlayedStreamsForGroup(groupId)
             }
         }

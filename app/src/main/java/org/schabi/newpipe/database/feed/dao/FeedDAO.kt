@@ -81,6 +81,31 @@ abstract class FeedDAO {
 
         INNER JOIN feed f
         ON s.uid = f.stream_id
+        
+        LEFT JOIN feed_group_subscription_join fgs
+        ON f.subscription_id = fgs.subscription_id
+        
+        WHERE fgs.group_id IS NULL
+
+        ORDER BY s.upload_date IS NULL DESC, s.upload_date DESC, s.uploader ASC
+        LIMIT 500
+        """
+    )
+    abstract fun getAllStreamsWithoutGroup(): Maybe<List<StreamWithState>>
+
+    @Query(
+        """
+        SELECT s.*, sst.progress_time
+        FROM streams s
+
+        LEFT JOIN stream_state sst
+        ON s.uid = sst.stream_id
+
+        LEFT JOIN stream_history sh
+        ON s.uid = sh.stream_id
+
+        INNER JOIN feed f
+        ON s.uid = f.stream_id
 
         INNER JOIN feed_group_subscription_join fgs
         ON fgs.subscription_id = f.subscription_id
