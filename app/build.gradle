@@ -123,7 +123,7 @@ configurations {
 
 checkstyle {
     getConfigDirectory().set(rootProject.file("checkstyle"))
-    ignoreFailures false
+    ignoreFailures true
     showViolations true
     toolVersion = checkstyleVersion
 }
