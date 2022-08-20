@@ -1,4 +1,4 @@
-package org.schabi.newpipe.player;
+package org.schabi.newpipe.player.notification;
 
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -7,20 +7,48 @@ import androidx.annotation.DrawableRes;
 import androidx.annotation.IntDef;
 import androidx.annotation.NonNull;
 
+import org.schabi.newpipe.App;
 import org.schabi.newpipe.R;
 import org.schabi.newpipe.util.Localization;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
 public final class NotificationConstants {
 
-    private NotificationConstants() { }
+    private NotificationConstants() {
+    }
+
+
+
+    /*//////////////////////////////////////////////////////////////////////////
+    // Intent actions
+    //////////////////////////////////////////////////////////////////////////*/
+
+    private static final String BASE_ACTION =
+            App.PACKAGE_NAME + ".player.MainPlayer.";
+    public static final String ACTION_CLOSE =
+            BASE_ACTION + "CLOSE";
+    public static final String ACTION_PLAY_PAUSE =
+            BASE_ACTION + ".player.MainPlayer.PLAY_PAUSE";
+    public static final String ACTION_REPEAT =
+            BASE_ACTION + ".player.MainPlayer.REPEAT";
+    public static final String ACTION_PLAY_NEXT =
+            BASE_ACTION + ".player.MainPlayer.ACTION_PLAY_NEXT";
+    public static final String ACTION_PLAY_PREVIOUS =
+            BASE_ACTION + ".player.MainPlayer.ACTION_PLAY_PREVIOUS";
+    public static final String ACTION_FAST_REWIND =
+            BASE_ACTION + ".player.MainPlayer.ACTION_FAST_REWIND";
+    public static final String ACTION_FAST_FORWARD =
+            BASE_ACTION + ".player.MainPlayer.ACTION_FAST_FORWARD";
+    public static final String ACTION_SHUFFLE =
+            BASE_ACTION + ".player.MainPlayer.ACTION_SHUFFLE";
+    public static final String ACTION_RECREATE_NOTIFICATION =
+            BASE_ACTION + ".player.MainPlayer.ACTION_RECREATE_NOTIFICATION";
 
 
     public static final int NOTHING = 0;
@@ -86,7 +114,7 @@ public final class NotificationConstants {
     };
 
 
-    public static final Integer[] SLOT_COMPACT_DEFAULTS = {0, 1, 2};
+    public static final List<Integer> SLOT_COMPACT_DEFAULTS = List.of(0, 1, 2);
 
     public static final int[] SLOT_COMPACT_PREF_KEYS = {
             R.string.notification_slot_compact_0_key,
@@ -152,7 +180,7 @@ public final class NotificationConstants {
 
             if (compactSlot == Integer.MAX_VALUE) {
                 // settings not yet populated, return default values
-                return new ArrayList<>(Arrays.asList(SLOT_COMPACT_DEFAULTS));
+                return new ArrayList<>(SLOT_COMPACT_DEFAULTS);
             }
 
             // a negative value (-1) is set when the user does not want a particular compact slot

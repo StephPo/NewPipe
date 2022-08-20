@@ -200,7 +200,7 @@ public class SearchFragment extends BaseListFragment<SearchInfo, ListExtractor.I
         showLocalSuggestions = NewPipeSettings.showLocalSearchSuggestions(activity, prefs);
         showRemoteSuggestions = NewPipeSettings.showRemoteSearchSuggestions(activity, prefs);
 
-        suggestionListAdapter = new SuggestionListAdapter(activity);
+        suggestionListAdapter = new SuggestionListAdapter();
         historyRecordManager = new HistoryRecordManager(context);
     }
 
@@ -497,9 +497,6 @@ public class SearchFragment extends BaseListFragment<SearchInfo, ListExtractor.I
                     + lastSearchedString);
         }
         searchEditText.setText(searchString);
-        if (android.os.Build.VERSION.SDK_INT < android.os.Build.VERSION_CODES.LOLLIPOP) {
-            searchEditText.setHintTextColor(searchEditText.getTextColors().withAlpha(128));
-        }
 
         if (TextUtils.isEmpty(searchString) || TextUtils.isEmpty(searchEditText.getText())) {
             searchToolbarContainer.setTranslationX(100);
@@ -533,7 +530,7 @@ public class SearchFragment extends BaseListFragment<SearchInfo, ListExtractor.I
             searchBinding.correctSuggestion.setVisibility(View.GONE);
 
             searchEditText.setText("");
-            suggestionListAdapter.setItems(new ArrayList<>());
+            suggestionListAdapter.submitList(null);
             showKeyboardSearch();
         });
 
@@ -922,7 +919,7 @@ public class SearchFragment extends BaseListFragment<SearchInfo, ListExtractor.I
         filterItemCheckedId = item.getItemId();
         item.setChecked(true);
 
-        contentFilter = new String[]{theContentFilter.get(0)};
+        contentFilter = theContentFilter.toArray(new String[0]);
 
         if (!TextUtils.isEmpty(searchString)) {
             search(searchString, contentFilter, sortFilter);
@@ -948,7 +945,7 @@ public class SearchFragment extends BaseListFragment<SearchInfo, ListExtractor.I
             Log.d(TAG, "handleSuggestions() called with: suggestions = [" + suggestions + "]");
         }
         searchBinding.suggestionsList.smoothScrollToPosition(0);
-        searchBinding.suggestionsList.post(() -> suggestionListAdapter.setItems(suggestions));
+        suggestionListAdapter.submitList(suggestions);
 
         if (suggestionsPanelVisible && isErrorPanelVisible()) {
             hideLoading();
@@ -983,8 +980,7 @@ public class SearchFragment extends BaseListFragment<SearchInfo, ListExtractor.I
         isCorrectedSearch = result.isCorrectedSearch();
 
         // List<MetaInfo> cannot be bundled without creating some containers
-        metaInfo = new MetaInfo[result.getMetaInfo().size()];
-        metaInfo = result.getMetaInfo().toArray(metaInfo);
+        metaInfo = result.getMetaInfo().toArray(new MetaInfo[0]);
         showMetaInfoInTextView(result.getMetaInfo(), searchBinding.searchMetaInfoTextView,
                 searchBinding.searchMetaInfoSeparator, disposables);
 
@@ -1070,14 +1066,14 @@ public class SearchFragment extends BaseListFragment<SearchInfo, ListExtractor.I
             return 0;
         }
 
-        final SuggestionItem item = suggestionListAdapter.getItem(position);
+        final SuggestionItem item = suggestionListAdapter.getCurrentList().get(position);
         return item.fromHistory ? makeMovementFlags(0,
                 ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT) : 0;
     }
 
     public void onSuggestionItemSwiped(@NonNull final RecyclerView.ViewHolder viewHolder) {
         final int position = viewHolder.getBindingAdapterPosition();
-        final String query = suggestionListAdapter.getItem(position).query;
+        final String query = suggestionListAdapter.getCurrentList().get(position).query;
         final Disposable onDelete = historyRecordManager.deleteSearchHistory(query)
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(

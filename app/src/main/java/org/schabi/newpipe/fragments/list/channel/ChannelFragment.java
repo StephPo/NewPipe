@@ -49,7 +49,7 @@ import org.schabi.newpipe.local.subscription.SubscriptionManager;
 import org.schabi.newpipe.local.subscription.dialog.SelectChannelGroupDialog;
 import org.schabi.newpipe.local.subscription.dialog.SelectChannelGroupDialog.ChooseChannelGroupListItem;
 import org.schabi.newpipe.local.feed.notifications.NotificationHelper;
-import org.schabi.newpipe.player.MainPlayer.PlayerType;
+import org.schabi.newpipe.player.PlayerType;
 import org.schabi.newpipe.player.playqueue.ChannelPlayQueue;
 import org.schabi.newpipe.player.playqueue.PlayQueue;
 import org.schabi.newpipe.util.ExtractorHelper;
@@ -675,17 +675,13 @@ public class ChannelFragment extends BaseListInfoFragment<StreamInfoItem, Channe
     }
 
     private PlayQueue getPlayQueue() {
-        return getPlayQueue(0);
-    }
-
-    private PlayQueue getPlayQueue(final int index) {
         final List<StreamInfoItem> streamItems = infoListAdapter.getItemsList().stream()
                 .filter(StreamInfoItem.class::isInstance)
                 .map(StreamInfoItem.class::cast)
                 .collect(Collectors.toList());
 
         return new ChannelPlayQueue(currentInfo.getServiceId(), currentInfo.getUrl(),
-                currentInfo.getNextPage(), streamItems, index);
+                currentInfo.getNextPage(), streamItems, 0);
     }
 
     /*//////////////////////////////////////////////////////////////////////////
