@@ -571,11 +571,12 @@ public class MainActivity extends AppCompatActivity {
             }
         }
 
-        if (getSupportFragmentManager().getBackStackEntryCount() == 1) {
-            finish();
-        } else {
-            super.onBackPressed();
-        }
+        // SPO Don't close application
+//        if (getSupportFragmentManager().getBackStackEntryCount() == 1) {
+//            finish();
+//        } else {
+//            super.onBackPressed();
+//        }
     }
 
     @Override
