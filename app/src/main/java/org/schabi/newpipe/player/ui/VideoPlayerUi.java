@@ -36,6 +36,7 @@ import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.SeekBar;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -1412,8 +1413,88 @@ public abstract class VideoPlayerUi extends PlayerUi
         return true;
     }
 
+    private boolean onKeyDownSpo(final int keyCode) {
+        switch (keyCode) {
+            default:
+                break;
+            case KeyEvent.KEYCODE_W:
+                player.seekTo(0);
+                return true;
+        }
+        return false;
+    }
+
+    private boolean onKeyDownForNewTempoSpo(final int keyCode) {
+        boolean isKeyForNewTempo = false;
+        float newTempo = 1.0f;
+        switch (keyCode) {
+            default:
+                break;
+            case KeyEvent.KEYCODE_Q:
+                isKeyForNewTempo = true;
+                newTempo = 1.00f;
+                break;
+            case KeyEvent.KEYCODE_A:
+                isKeyForNewTempo = true;
+                newTempo = 1.05f;
+                break;
+            case KeyEvent.KEYCODE_Z:
+                isKeyForNewTempo = true;
+                newTempo = 1.1f;
+                break;
+            case KeyEvent.KEYCODE_E:
+                isKeyForNewTempo = true;
+                newTempo = 1.15f;
+                break;
+            case KeyEvent.KEYCODE_R:
+                isKeyForNewTempo = true;
+                newTempo = 1.2f;
+                break;
+            case KeyEvent.KEYCODE_T:
+                isKeyForNewTempo = true;
+                newTempo = 1.25f;
+                break;
+            case KeyEvent.KEYCODE_Y:
+                isKeyForNewTempo = true;
+                newTempo = 1.3f;
+                break;
+            case KeyEvent.KEYCODE_U:
+                isKeyForNewTempo = true;
+                newTempo = 1.35f;
+                break;
+            case KeyEvent.KEYCODE_I:
+                isKeyForNewTempo = true;
+                newTempo = 1.4f;
+                break;
+            case KeyEvent.KEYCODE_O:
+                isKeyForNewTempo = true;
+                newTempo = 1.45f;
+                break;
+            case KeyEvent.KEYCODE_P:
+                isKeyForNewTempo = true;
+                newTempo = 1.5f;
+                break;
+        }
+        if (isKeyForNewTempo && player != null) {
+            player.setPlaybackParameters(
+                    newTempo,
+                    PlayerHelper.retrievePlaybackParametersFromPrefs(player).pitch,
+                    player.getPrefs().getBoolean(player.getContext().getString(R.string.playback_skip_silence_key), player.getPlaybackSkipSilence()));
+            Toast.makeText(context, "New tempo set to " + newTempo, Toast.LENGTH_SHORT).show();
+        }
+        return isKeyForNewTempo;
+    }
+
     public boolean onKeyDown(final int keyCode) {
         switch (keyCode) {
+            default:
+                if (onKeyDownForNewTempoSpo(keyCode)) { // Call done in "default" to prevent conflicts with a new dev from NewPipe using the same keycodes.
+                    return true;
+                }
+                if (onKeyDownSpo(keyCode)) { // Call done in "default" to prevent conflicts with a new dev from NewPipe using the same keycodes.
+                    return true;
+                }
+                break;
             case KeyEvent.KEYCODE_BACK:
                 if (DeviceUtils.isTv(context) && isControlsVisible()) {
                     hideControls(0, 0);
@@ -1435,6 +1516,16 @@ public abstract class VideoPlayerUi extends PlayerUi
                     return true;
                 }
 
+                // SPO fast forward or backward when tapping on right or left
+                if (keyCode == KeyEvent.KEYCODE_DPAD_RIGHT) {
+                    player.fastForward();
+                    return true;
+                }
+                if (keyCode == KeyEvent.KEYCODE_DPAD_LEFT) {
+                    player.fastRewind();
+                    return true;
+                }
+
                 if (isControlsVisible()) {
                     hideControls(DEFAULT_CONTROLS_DURATION, DPAD_CONTROLS_HIDE_TIME);
                 } else {
@@ -1444,8 +1535,6 @@ public abstract class VideoPlayerUi extends PlayerUi
                     return true;
                 }
                 break;
-            default:
-                break; // ignore other keys
         }
 
         return false;

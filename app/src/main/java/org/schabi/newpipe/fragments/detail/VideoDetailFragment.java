@@ -6,6 +6,8 @@ import static org.schabi.newpipe.extractor.stream.StreamExtractor.NO_AGE_LIMIT;
 import static org.schabi.newpipe.ktx.ViewUtils.animate;
 import static org.schabi.newpipe.ktx.ViewUtils.animateRotation;
 import static org.schabi.newpipe.player.helper.PlayerHelper.globalScreenOrientationLocked;
+import static org.schabi.newpipe.player.helper.PlayerHelper.globalScreenOrientationLocked;
+import static org.schabi.newpipe.player.helper.PlayerHelper.globalScreenOrientationLocked;
 import static org.schabi.newpipe.player.helper.PlayerHelper.isClearingQueueConfirmationRequired;
 import static org.schabi.newpipe.player.playqueue.PlayQueueItem.RECOVERY_UNSET;
 import static org.schabi.newpipe.util.ExtractorHelper.showMetaInfoInTextView;
@@ -62,7 +64,9 @@ import com.google.android.material.tabs.TabLayout;
 import com.squareup.picasso.Callback;
 
 import org.schabi.newpipe.App;
+import org.schabi.newpipe.NewPipeDatabase;
 import org.schabi.newpipe.R;
+import org.schabi.newpipe.database.feed.model.FeedGroupEntity;
 import org.schabi.newpipe.database.stream.model.StreamEntity;
 import org.schabi.newpipe.databinding.FragmentVideoDetailBinding;
 import org.schabi.newpipe.download.DownloadDialog;
@@ -87,6 +91,7 @@ import org.schabi.newpipe.fragments.list.videos.RelatedItemsFragment;
 import org.schabi.newpipe.ktx.AnimationType;
 import org.schabi.newpipe.local.dialog.PlaylistDialog;
 import org.schabi.newpipe.local.history.HistoryRecordManager;
+import org.schabi.newpipe.local.playlist.LocalPlaylistManager;
 import org.schabi.newpipe.player.Player;
 import org.schabi.newpipe.player.PlayerService;
 import org.schabi.newpipe.player.PlayerType;
@@ -107,12 +112,14 @@ import org.schabi.newpipe.util.Localization;
 import org.schabi.newpipe.util.NavigationHelper;
 import org.schabi.newpipe.util.PermissionHelper;
 import org.schabi.newpipe.util.PicassoHelper;
+import org.schabi.newpipe.util.ReturnYouTubeDislikeUtils;
 import org.schabi.newpipe.util.StreamTypeUtil;
 import org.schabi.newpipe.util.ThemeHelper;
 import org.schabi.newpipe.util.external_communication.KoreUtils;
 import org.schabi.newpipe.util.external_communication.ShareUtils;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -458,6 +465,18 @@ public final class VideoDetailFragment
                     );
                 }
                 break;
+            case R.id.detail_controls_watch_later:
+                final Context context = getContext();
+                if (currentInfo != null && context != null) {
+                    final Toast successToast = Toast.makeText(context, R.string.watch_later__success_toast, Toast.LENGTH_SHORT);
+                    final LocalPlaylistManager playlistManager = new LocalPlaylistManager(NewPipeDatabase.getInstance(context));
+                    disposables.add(
+                            playlistManager.appendToPlaylist(FeedGroupEntity.GROUP_LATER_SPO_ID, Collections.singletonList(new StreamEntity(currentInfo)))
+                                    .observeOn(AndroidSchedulers.mainThread())
+                                    .subscribe(ignored -> successToast.show())
+                    );
+                }
+                break;
             case R.id.detail_controls_download:
                 if (PermissionHelper.checkStoragePermissions(activity,
                         PermissionHelper.DOWNLOAD_DIALOG_REQUEST_CODE)) {
@@ -634,6 +653,7 @@ public final class VideoDetailFragment
             final int transparent = ContextCompat.getColor(requireContext(),
                     R.color.transparent_background_color);
             binding.detailControlsPlaylistAppend.setBackgroundColor(transparent);
+            binding.detailControlsWatchLater.setBackgroundColor(transparent);
             binding.detailControlsBackground.setBackgroundColor(transparent);
             binding.detailControlsPopup.setBackgroundColor(transparent);
             binding.detailControlsDownload.setBackgroundColor(transparent);
@@ -658,6 +678,7 @@ public final class VideoDetailFragment
         binding.detailControlsPopup.setOnClickListener(this);
         binding.detailControlsPopup.setOnLongClickListener(this);
         binding.detailControlsPlaylistAppend.setOnClickListener(this);
+        binding.detailControlsWatchLater.setOnClickListener(this);
         binding.detailControlsDownload.setOnClickListener(this);
         binding.detailControlsDownload.setOnLongClickListener(this);
         binding.detailControlsShare.setOnClickListener(this);
@@ -758,6 +779,25 @@ public final class VideoDetailFragment
     public boolean onBackPressed() {
         if (DEBUG) {
             Log.d(TAG, "onBackPressed() called");
+        }
+
+        if (true) { // SPO
+            // If we are in fullscreen mode just exit from it via first back press
+            if (isPlayerAvailable() && isFullscreen()) {
+                restoreDefaultOrientation();
+                setAutoPlay(false);
+                return true;
+            }
+        }
+
+        if (true) { // if (behavior == PlayerHelper.BackBehavior.BACK_BEHAVIOR_CLOSE) { // SPO
+            if (!isPlayerAvailable() || player.videoPlayerSelected()) {
+                bottomSheetBehavior.setState(BottomSheetBehavior.STATE_HIDDEN);
+            } else {
+                // Since it's not a video playing we can't close the player
+                bottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
+            }
+            return true;
         }
 
         // If we are in fullscreen mode just exit from it via first back press
@@ -1095,6 +1135,15 @@ public final class VideoDetailFragment
                     playerUi.toggleFullscreen();
                 }
             });
+        }
+    }
+
+    private void rotateScreenOnPhoneIfInLandscape() {
+        if (!DeviceUtils.isTablet(activity)
+                && !DeviceUtils.isTv(activity)
+                && DeviceUtils.isLandscape(requireContext())
+                && globalScreenOrientationLocked(activity)) {
+            onScreenRotationButtonClicked();
         }
     }
 
@@ -1583,6 +1632,19 @@ public final class VideoDetailFragment
 
             binding.detailThumbsDisabledView.setVisibility(View.VISIBLE);
         } else {
+            if (info.getDislikeCount() == -1) {
+                new Thread(() -> {
+                    info.setDislikeCount(ReturnYouTubeDislikeUtils.getDislikes(getContext(), info));
+                    if (info.getDislikeCount() >= 0) {
+                        activity.runOnUiThread(() -> {
+                            binding.detailThumbsDownCountView.setText(Localization
+                                    .shortCount(activity, info.getDislikeCount()));
+                            binding.detailThumbsDownCountView.setVisibility(View.VISIBLE);
+                            binding.detailThumbsDownImgView.setVisibility(View.VISIBLE);
+                        });
+                    }
+                }).start();
+            }
             if (info.getDislikeCount() >= 0) {
                 binding.detailThumbsDownCountView.setText(Localization
                         .shortCount(activity, info.getDislikeCount()));
@@ -2192,6 +2254,10 @@ public final class VideoDetailFragment
      * Remove unneeded information while waiting for a next task
      * */
     private void cleanUp() {
+        // On every clean up operation we want to be in non-fullscreen mode,
+        // since it returns UI into it's initial look when nothing is played
+        toggleFullscreenIfInFullscreenMode();
+
         // New beginning
         stack.clear();
         if (currentWorker != null) {

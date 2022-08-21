@@ -45,7 +45,6 @@ public final class ReturnYouTubeDislikeUtils {
             final String responseBody =
                     DownloaderImpl
                             .getInstance()
-                            .setCustomTimeout(3)
                             .get(API_URL + streamInfo.getId())
                             .responseBody();
 

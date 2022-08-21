@@ -255,7 +255,7 @@ public final class MainPlayerUi extends VideoPlayerUi implements View.OnLayoutCh
         binding.moreOptionsButton.setVisibility(View.VISIBLE);
         binding.topControls.setOrientation(LinearLayout.VERTICAL);
         binding.primaryControls.getLayoutParams().width = MATCH_PARENT;
-        binding.secondaryControls.setVisibility(View.INVISIBLE);
+        binding.secondaryControls.setVisibility(View.VISIBLE);
         binding.moreOptionsButton.setImageDrawable(AppCompatResources.getDrawable(context,
                 R.drawable.ic_expand_more));
         binding.share.setVisibility(View.VISIBLE);
