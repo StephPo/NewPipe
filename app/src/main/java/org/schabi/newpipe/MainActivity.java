@@ -572,6 +572,10 @@ public class MainActivity extends AppCompatActivity {
         }
 
         // SPO Don't close application
+        if (getSupportFragmentManager().getBackStackEntryCount() != 1) {
+            super.onBackPressed();
+        }
+
 //        if (getSupportFragmentManager().getBackStackEntryCount() == 1) {
 //            finish();
 //        } else {
