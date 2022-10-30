@@ -545,6 +545,9 @@ public final class VideoDetailFragment
             case R.id.overlay_buttons_layout:
                 bottomSheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
                 break;
+            case R.id.overlay_play_queue_button:
+                NavigationHelper.openPlayQueue(getContext());
+                break;
             case R.id.overlay_play_pause_button:
                 if (playerIsNotStopped()) {
                     player.playPause();
@@ -705,6 +708,7 @@ public final class VideoDetailFragment
         binding.overlayMetadataLayout.setOnClickListener(this);
         binding.overlayMetadataLayout.setOnLongClickListener(this);
         binding.overlayButtonsLayout.setOnClickListener(this);
+        binding.overlayPlayQueueButton.setOnClickListener(this);
         binding.overlayCloseButton.setOnClickListener(this);
         binding.overlayPlayPauseButton.setOnClickListener(this);
 
@@ -2492,6 +2496,7 @@ public final class VideoDetailFragment
         binding.overlayMetadataLayout.setClickable(enable);
         binding.overlayMetadataLayout.setLongClickable(enable);
         binding.overlayButtonsLayout.setClickable(enable);
+        binding.overlayPlayQueueButton.setClickable(enable);
         binding.overlayPlayPauseButton.setClickable(enable);
         binding.overlayCloseButton.setClickable(enable);
     }

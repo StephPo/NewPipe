@@ -589,7 +589,7 @@
     <string name="show_meta_info_summary">Deaktiviere diese Option, um Meta-Infofelder mit zusätzlichen Informationen zum Stream-Ersteller, zum Stream-Inhalt oder zu einer Suchanforderung auszublenden</string>
     <string name="chapters">Kapitel</string>
     <string name="description_tab_description">Beschreibung</string>
-    <string name="related_items_tab_description">Verwandte Streams</string>
+    <string name="related_items_tab_description">Verwandte Elemente</string>
     <string name="comments_tab_description">Kommentare</string>
     <string name="show_description_summary">Ausschalten, um Videobeschreibung und Zusatzinformationen auszublenden</string>
     <string name="show_description_title">Beschreibung anzeigen</string>
@@ -680,12 +680,12 @@
     <string name="create_error_notification">Eine Fehlermeldung erstellen</string>
     <string name="show_error_snackbar">Fehler-Kurzmeldung anzeigen</string>
     <string name="no_appropriate_file_manager_message">Es wurde kein geeigneter Dateimanager für diese Aktion gefunden.
-\nBitte installiere einen Dateimanager oder versuche, \'%s\' in den Downloadeinstellungen zu deaktivieren.</string>
+\nBitte installiere einen Dateimanager oder versuche, \'%s\' in den Downloadeinstellungen zu deaktivieren</string>
     <string name="no_appropriate_file_manager_message_android_10">Es wurde kein geeigneter Dateimanager für diese Aktion gefunden.
-\nBitte installiere einen Storage Access Framework kompatiblen Dateimanager.</string>
+\nBitte installiere einen Storage Access Framework kompatiblen Dateimanager</string>
     <string name="detail_pinned_comment_view_description">Angehefteter Kommentar</string>
     <string name="leak_canary_not_available">LeakCanary ist nicht verfügbar</string>
-    <string name="progressive_load_interval_summary">Ändern der Größe des Ladeintervalls (derzeit %s). Ein niedrigerer Wert kann das anfängliche Laden des Videos beschleunigen. Änderungen erfordern einen Neustart des Players.</string>
+    <string name="progressive_load_interval_summary">Ändern der Größe des Ladeintervalls (derzeit %s). Ein niedrigerer Wert kann das anfängliche Laden des Videos beschleunigen. Änderungen erfordern einen Neustart des Players</string>
     <string name="progressive_load_interval_exoplayer_default">ExoPlayer Standard</string>
     <string name="notifications">Benachrichtigungen</string>
     <string name="streams_notification_channel_description">Benachrichtigen über neue abonnierbare Streams</string>
@@ -717,5 +717,7 @@
     <string name="streams_not_yet_supported_removed">Streams, die noch nicht vom Downloader unterstützt werden, werden nicht angezeigt</string>
     <string name="selected_stream_external_player_not_supported">Der ausgewählte Stream wird von externen Playern nicht unterstützt</string>
     <string name="progressive_load_interval_title">Größe des Ladeintervalls für die Wiedergabe</string>
-    <string name="feed_toggle_show_future_items">Zukünftige Videos anzeigen</string>
+    <string name="feed_toggle_show_future_items">Zukünftige Elemente anzeigen</string>
+    <string name="feed_toggle_hide_played_items">Angesehene Elemente ausblenden</string>
+    <string name="feed_toggle_hide_future_items">Zukünftige Elemente ausblenden</string>
 </resources>
