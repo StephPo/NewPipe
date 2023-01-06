@@ -6,8 +6,6 @@ import static org.schabi.newpipe.extractor.stream.StreamExtractor.NO_AGE_LIMIT;
 import static org.schabi.newpipe.ktx.ViewUtils.animate;
 import static org.schabi.newpipe.ktx.ViewUtils.animateRotation;
 import static org.schabi.newpipe.player.helper.PlayerHelper.globalScreenOrientationLocked;
-import static org.schabi.newpipe.player.helper.PlayerHelper.globalScreenOrientationLocked;
-import static org.schabi.newpipe.player.helper.PlayerHelper.globalScreenOrientationLocked;
 import static org.schabi.newpipe.player.helper.PlayerHelper.isClearingQueueConfirmationRequired;
 import static org.schabi.newpipe.player.playqueue.PlayQueueItem.RECOVERY_UNSET;
 import static org.schabi.newpipe.util.ExtractorHelper.showMetaInfoInTextView;
@@ -505,6 +503,19 @@ public final class VideoDetailFragment
             binding.detailControlsCrashThePlayer.setOnClickListener(v ->
                     VideoDetailPlayerCrasher.onCrashThePlayer(requireContext(), player));
         }
+
+        binding.detailControlsWatchLater.setOnClickListener(v -> {
+            final Context context = getContext();
+            if (currentInfo != null && context != null) {
+                final Toast successToast = Toast.makeText(context, R.string.watch_later__success_toast, Toast.LENGTH_SHORT);
+                final LocalPlaylistManager playlistManager = new LocalPlaylistManager(NewPipeDatabase.getInstance(context));
+                disposables.add(
+                        playlistManager.appendToPlaylist(FeedGroupEntity.GROUP_LATER_SPO_ID, Collections.singletonList(new StreamEntity(currentInfo)))
+                                .observeOn(AndroidSchedulers.mainThread())
+                                .subscribe(ignored -> successToast.show())
+                );
+            }
+        });
 
         final View.OnClickListener overlayListener = v -> bottomSheetBehavior
                 .setState(BottomSheetBehavior.STATE_EXPANDED);
