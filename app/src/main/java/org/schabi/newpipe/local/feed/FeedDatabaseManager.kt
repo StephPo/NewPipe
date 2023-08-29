@@ -45,11 +45,20 @@ class FeedDatabaseManager(context: Context) {
     fun getStreams(
         groupId: Long,
         includePlayedStreams: Boolean,
+        includePartiallyPlayedStreams: Boolean,
         includeFutureStreams: Boolean
     ): Maybe<List<StreamWithState>> {
         return when (groupId) {
-            FeedGroupEntity.GROUP_ALL_ID -> feedTable.getAllStreamsWithoutGroup(OffsetDateTime.now(ZoneOffset.UTC))
-            else -> feedTable.getAllStreamsForGroup(groupId, OffsetDateTime.now(ZoneOffset.UTC))
+            FeedGroupEntity.GROUP_ALL_ID -> feedTable.getAllStreamsWithoutGroup(
+                groupId,
+                includePlayedStreams,
+                includePartiallyPlayedStreams,
+                if (includeFutureStreams) null else OffsetDateTime.now()
+            else -> feedTable.getAllStreamsForGroup(
+                groupId,
+                includePlayedStreams,
+                includePartiallyPlayedStreams,
+                if (includeFutureStreams) null else OffsetDateTime.now()
         }
     }
 

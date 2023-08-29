@@ -7,6 +7,7 @@ import com.google.android.exoplayer2.MediaItem.RequestMetadata;
 import com.google.android.exoplayer2.MediaMetadata;
 import com.google.android.exoplayer2.Player;
 
+import org.schabi.newpipe.extractor.stream.AudioStream;
 import org.schabi.newpipe.extractor.stream.StreamInfo;
 import org.schabi.newpipe.extractor.stream.StreamType;
 import org.schabi.newpipe.extractor.stream.VideoStream;
@@ -55,18 +56,22 @@ public interface MediaItemTag {
         return Optional.empty();
     }
 
+    @NonNull
+    default Optional<AudioTrack> getMaybeAudioTrack() {
+        return Optional.empty();
+    }
+
     <T> Optional<T> getMaybeExtras(@NonNull Class<T> type);
 
     <T> MediaItemTag withExtras(@NonNull T extra);
 
     @NonNull
     static Optional<MediaItemTag> from(@Nullable final MediaItem mediaItem) {
-        if (mediaItem == null || mediaItem.localConfiguration == null
-                || !(mediaItem.localConfiguration.tag instanceof MediaItemTag)) {
-            return Optional.empty();
-        }
-
-        return Optional.of((MediaItemTag) mediaItem.localConfiguration.tag);
+        return Optional.ofNullable(mediaItem)
+                .map(item -> item.localConfiguration)
+                .map(localConfiguration -> localConfiguration.tag)
+                .filter(MediaItemTag.class::isInstance)
+                .map(MediaItemTag.class::cast);
     }
 
     @NonNull
@@ -127,6 +132,39 @@ public interface MediaItemTag {
             return selectedVideoStreamIndex < 0
                     || selectedVideoStreamIndex >= sortedVideoStreams.size()
                     ? null : sortedVideoStreams.get(selectedVideoStreamIndex);
+        }
+    }
+
+    final class AudioTrack {
+        @NonNull
+        private final List<AudioStream> audioStreams;
+        private final int selectedAudioStreamIndex;
+
+        private AudioTrack(@NonNull final List<AudioStream> audioStreams,
+                           final int selectedAudioStreamIndex) {
+            this.audioStreams = audioStreams;
+            this.selectedAudioStreamIndex = selectedAudioStreamIndex;
+        }
+
+        static AudioTrack of(@NonNull final List<AudioStream> audioStreams,
+                             final int selectedAudioStreamIndex) {
+            return new AudioTrack(audioStreams, selectedAudioStreamIndex);
+        }
+
+        @NonNull
+        public List<AudioStream> getAudioStreams() {
+            return audioStreams;
+        }
+
+        public int getSelectedAudioStreamIndex() {
+            return selectedAudioStreamIndex;
+        }
+
+        @Nullable
+        public AudioStream getSelectedAudioStream() {
+            return selectedAudioStreamIndex < 0
+                    || selectedAudioStreamIndex >= audioStreams.size()
+                    ? null : audioStreams.get(selectedAudioStreamIndex);
         }
     }
 }

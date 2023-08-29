@@ -215,8 +215,7 @@ public class ChannelFragment extends BaseListInfoFragment<StreamInfoItem, Channe
                 break;
             case R.id.menu_item_rss:
                 if (currentInfo != null) {
-                    ShareUtils.openUrlInBrowser(
-                            requireContext(), currentInfo.getFeedUrl(), false);
+                    ShareUtils.openUrlInApp(requireContext(), currentInfo.getFeedUrl());
                 }
                 break;
             case R.id.menu_item_openInBrowser:
@@ -671,7 +670,7 @@ public class ChannelFragment extends BaseListInfoFragment<StreamInfoItem, Channe
         channelBinding.errorContentNotSupported.setVisibility(View.VISIBLE);
         channelBinding.channelKaomoji.setText("(︶︹︺)");
         channelBinding.channelKaomoji.setTextSize(TypedValue.COMPLEX_UNIT_SP, 45f);
-        channelBinding.channelNoVideos.setVisibility(View.GONE);
+        channelBinding.emptyStateMessage.setVisibility(View.GONE);
     }
 
     private PlayQueue getPlayQueue() {

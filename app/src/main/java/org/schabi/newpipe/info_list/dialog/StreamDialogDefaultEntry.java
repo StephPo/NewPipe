@@ -6,14 +6,18 @@ import static org.schabi.newpipe.util.SparseItemUtil.fetchStreamInfoAndSaveToDat
 import static org.schabi.newpipe.util.SparseItemUtil.fetchUploaderUrlIfSparse;
 
 import android.content.Context;
+import android.content.Context;
 import android.net.Uri;
+import android.widget.Toast;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.StringRes;
 
 import org.schabi.newpipe.NewPipeDatabase;
+import org.schabi.newpipe.NewPipeDatabase;
 import org.schabi.newpipe.R;
+import org.schabi.newpipe.database.feed.model.FeedGroupEntity;
 import org.schabi.newpipe.database.feed.model.FeedGroupEntity;
 import org.schabi.newpipe.database.stream.model.StreamEntity;
 import org.schabi.newpipe.download.DownloadDialog;
@@ -21,10 +25,12 @@ import org.schabi.newpipe.local.dialog.PlaylistAppendDialog;
 import org.schabi.newpipe.local.dialog.PlaylistDialog;
 import org.schabi.newpipe.local.history.HistoryRecordManager;
 import org.schabi.newpipe.local.playlist.LocalPlaylistManager;
+import org.schabi.newpipe.local.playlist.LocalPlaylistManager;
 import org.schabi.newpipe.util.NavigationHelper;
 import org.schabi.newpipe.util.external_communication.KoreUtils;
 import org.schabi.newpipe.util.external_communication.ShareUtils;
 
+import java.util.Collections;
 import java.util.Collections;
 import java.util.List;
 
@@ -116,14 +122,8 @@ public enum StreamDialogDefaultEntry {
         }
     })),
 
-    PLAY_WITH_KODI(R.string.play_with_kodi_title, (fragment, item) -> {
-        final Uri videoUrl = Uri.parse(item.getUrl());
-        try {
-            NavigationHelper.playWithKore(fragment.requireContext(), videoUrl);
-        } catch (final Exception e) {
-            KoreUtils.showInstallKoreDialog(fragment.requireActivity());
-        }
-    }),
+    PLAY_WITH_KODI(R.string.play_with_kodi_title, (fragment, item) ->
+            KoreUtils.playWithKore(fragment.requireContext(), Uri.parse(item.getUrl()))),
 
     SHARE(R.string.share, (fragment, item) ->
             ShareUtils.shareText(fragment.requireContext(), item.getName(), item.getUrl(),
