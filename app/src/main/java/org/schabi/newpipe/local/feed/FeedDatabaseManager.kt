@@ -49,16 +49,8 @@ class FeedDatabaseManager(context: Context) {
         includeFutureStreams: Boolean
     ): Maybe<List<StreamWithState>> {
         return when (groupId) {
-            FeedGroupEntity.GROUP_ALL_ID -> feedTable.getAllStreamsWithoutGroup(
-                groupId,
-                includePlayedStreams,
-                includePartiallyPlayedStreams,
-                if (includeFutureStreams) null else OffsetDateTime.now()
-            else -> feedTable.getAllStreamsForGroup(
-                groupId,
-                includePlayedStreams,
-                includePartiallyPlayedStreams,
-                if (includeFutureStreams) null else OffsetDateTime.now()
+            FeedGroupEntity.GROUP_ALL_ID -> feedTable.getAllStreamsWithoutGroup(OffsetDateTime.now())
+            else -> feedTable.getAllStreamsForGroup(groupId, OffsetDateTime.now())
         }
     }
 

@@ -191,7 +191,8 @@ class FeedFragment : BaseStateFragment<FeedState>() {
     override fun initListeners() {
         super.initListeners()
         feedBinding.refreshRootView.setOnClickListener { reloadContent() }
-        feedBinding.swipeRefreshLayout.setOnRefreshListener { reloadContent() }
+        // bfeedBinding.swipeRefreshLayout.setOnRefreshListener { reloadContent() }
+        feedBinding.swipeRefreshLayout.setOnRefreshListener { hideLoading() } // SPO: I don't want to refresh items on scroll up
         feedBinding.newItemsLoadedButton.setOnClickListener {
             hideNewItemsLoaded(true)
             feedBinding.itemsList.scrollToPosition(0)

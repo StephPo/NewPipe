@@ -1433,8 +1433,13 @@ public abstract class VideoPlayerUi extends PlayerUi implements SeekBar.OnSeekBa
         switch (keyCode) {
             default:
                 break;
-            case KeyEvent.KEYCODE_W:
+            case KeyEvent.KEYCODE_X:
                 player.seekTo(0);
+                return true;
+            case KeyEvent.KEYCODE_F1:
+            case KeyEvent.KEYCODE_F12:
+            case KeyEvent.KEYCODE_1:
+                player.UIs().get(MainPlayerUi.class).ifPresent(MainPlayerUi::toggleFullscreen);
                 return true;
         }
         return false;
@@ -1446,7 +1451,7 @@ public abstract class VideoPlayerUi extends PlayerUi implements SeekBar.OnSeekBa
         switch (keyCode) {
             default:
                 break;
-            case KeyEvent.KEYCODE_Q:
+            case KeyEvent.KEYCODE_W:
                 isKeyForNewTempo = true;
                 newTempo = 1.00f;
                 break;
@@ -1490,6 +1495,16 @@ public abstract class VideoPlayerUi extends PlayerUi implements SeekBar.OnSeekBa
                 isKeyForNewTempo = true;
                 newTempo = 1.5f;
                 break;
+            case KeyEvent.KEYCODE_SEMICOLON:
+            case KeyEvent.KEYCODE_M:
+                isKeyForNewTempo = true;
+                newTempo = player.getPlaybackParameters().speed + 0.1f;
+                break;
+            case KeyEvent.KEYCODE_RIGHT_BRACKET:
+            case KeyEvent.KEYCODE_L:
+                isKeyForNewTempo = true;
+                newTempo = player.getPlaybackParameters().speed - 0.1f;
+                break;
         }
         if (isKeyForNewTempo && player != null) {
             player.setPlaybackParameters(
@@ -1522,6 +1537,8 @@ public abstract class VideoPlayerUi extends PlayerUi implements SeekBar.OnSeekBa
             case KeyEvent.KEYCODE_DPAD_DOWN:
             case KeyEvent.KEYCODE_DPAD_RIGHT:
             case KeyEvent.KEYCODE_DPAD_CENTER:
+            case KeyEvent.KEYCODE_Q:
+            case KeyEvent.KEYCODE_S:
                 if ((binding.getRoot().hasFocus() && !binding.playbackControlRoot.hasFocus())
                         || isAnyListViewOpen()) {
                     // do not interfere with focus in playlist and play queue etc.
@@ -1533,11 +1550,11 @@ public abstract class VideoPlayerUi extends PlayerUi implements SeekBar.OnSeekBa
                 }
 
                 // SPO fast forward or backward when tapping on right or left
-                if (keyCode == KeyEvent.KEYCODE_DPAD_RIGHT) {
+                if (keyCode == KeyEvent.KEYCODE_DPAD_RIGHT || keyCode == KeyEvent.KEYCODE_S) {
                     player.fastForward();
                     return true;
                 }
-                if (keyCode == KeyEvent.KEYCODE_DPAD_LEFT) {
+                if (keyCode == KeyEvent.KEYCODE_DPAD_LEFT || keyCode == KeyEvent.KEYCODE_Q) {
                     player.fastRewind();
                     return true;
                 }
